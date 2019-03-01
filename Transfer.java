@@ -9,14 +9,14 @@ package interview;
 //
 //        示例：
 //        输入：1098.87
-//        输出：壹仟零玖拾捌元捌角柒分
+//        输出：壹仟零玖拾捌圆捌角柒分
 //        输入：89
-//        输出：捌拾玖元整
+//        输出：捌拾玖圆整
 
 
 public class Transfer {
     private static final String[] NUMBERS = {"零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"};
-    private static final char[] IUNIT = new char[]{'元', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿', '拾', '佰', '仟', '万', '拾', '佰', '仟'};
+    private static final char[] IUNIT = new char[]{'圆', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿', '拾', '佰', '仟', '万', '拾', '佰', '仟'};
     private static final char[] DUNIT = new char[]{'角', '分', '厘'};
 
     public static String transfer(Double val) {
@@ -25,13 +25,14 @@ public class Transfer {
         int iVal = val.intValue();
         int preNum = 0;
         if (iVal == 0) {
-            sbf.insert(0, IUNIT[0]);
-            sbf.insert(0, NUMBERS[0]);
+            sbf.insert(0, "零圆");
         } else {
             for (int i = 0; iVal != 0; i++) {
                 int num = iVal % 10;
                 if (num == 0) { //等于零的时候
-                    if (preNum != 0) {
+                    if (i % 4 == 0) {
+                        sbf.insert(0, IUNIT[i]);
+                    } else if (preNum != 0) {
                         sbf.insert(0, NUMBERS[num]);
                     }
                 } else {
@@ -42,17 +43,18 @@ public class Transfer {
                 iVal /= 10;
             }
         }
-        Double dVal = val;
-        for (int i = 0; i < 3; i++) {
-            dVal = dVal - dVal.intValue();
-            dVal *= 10;
-            sbf.append(NUMBERS[dVal.intValue()]);
-            sbf.append(DUNIT[i]);
+        String dVal = String.format("%.3f", val - val.intValue());
+        for (int i = 2; i < dVal.length(); i++) {
+            int v = Integer.parseInt(dVal.substring(i,i+1));
+            sbf.append(NUMBERS[v]);
+            sbf.append(DUNIT[i-2]);
         }
         return sbf.toString();
     }
 
     public static void main(String[] args) {
-        System.out.println(transfer(112031098.876));
+        System.out.println(transfer(20300098.876));
+        System.out.println(transfer(09.876));
+        System.out.println(transfer(109.876));
     }
 }
